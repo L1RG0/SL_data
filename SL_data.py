@@ -4,16 +4,17 @@ made by *Lirgo*
 ***SL_data***
 
 very basic library to save and load data from a file
-version 0.2
+version 0.2.1
 """
 import os
 
 lib_name = 'SL_data'
-lib_version = 0.2
+lib_version = 0.2.1
 lib_description = 'very basic library to save and load data from a file'
 
 print(f'Thanks for using {lib_name} library')
 print(f'version {lib_version}')
+print()
 
 class data_name_not_found(Exception):
     pass
@@ -24,12 +25,6 @@ class SL:
     def save(self, name, data):
         file = open(self.path, 'r')
         buffer = open('buffer', 'w')
-
-        try:
-            _ = data[0]
-            data = tuple(data)
-        except TypeError:
-            _ = None
 
         skipped = False
         for line in file:
@@ -113,7 +108,7 @@ class SL:
                             break
                 data_name += ch
             if found:
-                ret = data_name[1:]
+                ret = data_name[1:-1]
                 if ret[0] == '(':
                     new_ret = []
                     one_val = ''
