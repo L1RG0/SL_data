@@ -23,9 +23,11 @@ if there is no data of specified name the library will add a new line and save v
     print(values.load('some_string'))
     print(values.load('tuple'))
 
-42
-Lorem ipsum
-('3', ' 1', ' 4', ' 1', ' 5', ' 9', ' 2', ' 6', ' 5', ' 3', ' 5')
+**output:**
+
+    42
+    Lorem ipsum
+    ('3', ' 1', ' 4', ' 1', ' 5', ' 9', ' 2', ' 6', ' 5', ' 3', ' 5')
 
 The code is still under construction so
 for now everything loaded is loaded as strings
