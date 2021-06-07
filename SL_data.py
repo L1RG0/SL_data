@@ -4,12 +4,12 @@ made by *Lirgo*
 ***SL_data***
 
 very basic library to save and load data from a file
-version 0.2.1
+version 0.3.0
 """
 import os
 
 lib_name = 'SL_data'
-lib_version = 0.2.1
+lib_version = '0.3.0'
 lib_description = 'very basic library to save and load data from a file'
 
 print(f'Thanks for using {lib_name} library')
@@ -21,43 +21,53 @@ class data_name_not_found(Exception):
 class SL:
     def __init__(self, path, welcome=True):
         self.path = path
+        self.data_types = []
+        self.data_names = []
+        self.data_values = []
+        self.update_arrays()
 
-    def save(self, name, data):
+    def update_arrays(self):
+        self.data_types = []
+        self.data_names = []
+        self.data_values = []
         file = open(self.path, 'r')
-        buffer = open('buffer', 'w')
-
-        skipped = False
         for line in file:
-            skip = False
-            data_name = ""
-            for ch in line:
-                if ch == ':':
-                    if data_name == name:
-                        skip = True
-                        skipped = True
-                        buffer.write(name + ':' + str(data) + '\n')
-                    else:
-                        break
-                data_name += ch
-            if not skip:
-                buffer.write(line)
-
-        buffer.close()
+            data_name = ''
+            data_type = ''
+            for index, ch in enumerate(line):
+                if ch == ':' and len(self.data_types) > len(self.data_names):
+                    self.data_names.append(data_name)
+                    self.data_values.append(line[index + 1:-1])
+                    break
+                elif len(self.data_types) > len(self.data_names):
+                    data_name += ch
+                elif ch == ':':
+                    self.data_types.append(data_type)
+                else:
+                    data_type += ch
         file.close()
 
+    def save(self, name, data):
+
+        with open('buffer', 'w') as buffer:
+            skipped = False
+            for data_type, data_name, data_value in zip(self.data_types, self.data_names, self.data_values):
+                if data_name == name:
+                    buffer.write(str(type(data))[8:-2] + f':{name}:{data}\n')
+                    skipped = True
+                else:
+                    buffer.write(f'{data_type}:{data_name}:{str(data_value)}\n')
+
         if skipped:
-            file = open(self.path, 'w')
-            buffer = open('buffer', 'r')
-
-            for line in buffer:
-                file.write(line)
-
-            buffer.close()
-            file.close()
+            with open(self.path, 'w') as file:
+                with open('buffer', 'r') as buffer:
+                    for line in buffer:
+                        file.write(line)
         else:
-            file = open(self.path, 'a')
-            file.write(name + ':' + str(data) + '\n')
+            with open(self.path, 'a') as file:
+                file.write(str(type(data))[8:-2] + f':{name}:{data}\n')
         os.remove('buffer')
+        self.update_arrays()
 
     def remove_data(self, name):
         file = open(self.path, 'r')
@@ -94,37 +104,10 @@ class SL:
         os.remove('buffer')
 
     def load(self, name):
-        file = open(self.path, 'r')
-        found = False
-        for line in file:
-            data_name = ''
-            for ch in line:
-                if not found:
-                    if ch == ':':
-                        if data_name == name:
-                            found = True
-                            data_name = ''
-                        else:
-                            break
-                data_name += ch
-            if found:
-                ret = data_name[1:-1]
-                if ret[0] == '(':
-                    new_ret = []
-                    one_val = ''
-                    for char in ret[1:]:
-                        if char == ')':
-                            new_ret.append(one_val)
-                            return tuple(new_ret)
-                        elif char == ',':
-                            new_ret.append(one_val)
-                            one_val = ''
-                        else:
-                            one_val += char
-                else:
-                    return ret
-        if not found:
-            raise data_name_not_found('could not find data of specified name')
+        for file_name, file_value in zip(self.data_names, self.data_values):
+            if file_name == name:
+                return file_value
+        raise data_name_not_found('could not find data of specified name')
 
     def erase(self, confirmation=False):
         if confirmation:
