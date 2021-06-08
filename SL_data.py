@@ -7,9 +7,26 @@ very basic library to save and load data from a file
 version 1.0.0 alpha
 """
 
-lib_name = 'SL_data'
-lib_version = '0.3.0'
-lib_description = 'very basic library to save and load data from a file'
+def change_type(data_type, value):
+    if   data_type == 'int'    : return int(value)
+    elif data_type == 'float'  : return float(value)
+    elif data_type == 'bool'   : return value == 'True'
+    elif data_type == 'str'    : return value
+    elif data_type == 'complex': return complex(value)
+    elif data_type in ('tuple', 'list', 'set'):
+        output = []
+        one_val = ''
+        for ch in value:
+            if ch not in ('{', '}', '(', ')', '[', ']', ' '):
+                if ch == ',':
+                    output.append(one_val)
+                    one_val = ''
+                else:
+                    one_val += ch
+
+        if data_type == 'tuple': return tuple(output)
+        elif data_type == 'set': return set(output)
+        else: return output
 
     raise data_name_error('file type not supported, please contact the library author for possible implementation')
 
