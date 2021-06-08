@@ -23,7 +23,8 @@ The usage is simple, here's some example python code:
 the code above saves data to a specified name (custom) with parsed type (currently supports only types mentioned above, if you'd like to add a new data type feel free to contact me)
 if there is some data in file with the same name, the data will be overwritten
 if there is no data of specified name the library will add a new line and save values there
-
+    
+    print(values.load('val_int'))
     print(values.load('val_str'))
     print(values.load('val_tup'))
     print(values.load('val_lis'))
@@ -53,14 +54,15 @@ this will remove 'data_name' from a saved file
     values.erase()
 
 this will erase all contents of the file
-However it will ask whether to delete all data for sure
-this can be sped up by passing True as an argument
+However it will ask whether to delete all data for sure.
 
-the message is for safety reasons only and from my experience
+This can be sped up by passing True as an argument
+
+The message is for safety reasons only and from my experience
 this was very helpful (mistakes happen)
 
 
-the file with saved values looks for example like this:
+The file with saved values from the examples above looks like this:
 
     int:val_int:42
     str:val_str:Lorem ipsum
